@@ -34,36 +34,45 @@ pwLabel.pack(side="right")
 logInFrame.place(x=600, y=12)
 headerFrame.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
 
+
+
+
 # 신문사
 newsFrame = Frame(root, bg="green", highlightcolor="white", highlightthickness=2)
-news_var = StringVar()
+newsVar = StringVar()
+def selectedNews():
+    global newsVar
+    newsVar.get()
 # 조선
-radioChosun = Radiobutton(newsFrame, width=15, font=15, text="조선일보", value="조선일보", bg="green", fg="white", variable=news_var, pady=15).grid(row=0, column=0)
+radioChosun = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="조선일보", value="조선일보", bg="green", fg="white", variable=newsVar, pady=15, command=selectedNews).grid(row=0, column=0)
 # 중앙
-radioJungang = Radiobutton(newsFrame, width=15, font=15, text="중앙일보", value="중앙일보", bg="green", fg="white", variable=news_var).grid(row=0, column=1)
+radioJungang = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="중앙일보", value="중앙일보", bg="green", fg="white", variable=newsVar, pady=15, command=selectedNews).grid(row=0, column=1)
 # 동아
-radioDonga = Radiobutton(newsFrame, width=15, font=15, text="동아일보", value="동아일보", bg="green", fg="white", variable=news_var).grid(row=0, column=2)
+radioDonga = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="동아일보", value="동아일보", bg="green", fg="white", variable=newsVar, pady=15, command=selectedNews).grid(row=0, column=2)
 # 한겨레
-radioHan = Radiobutton(newsFrame, width=15, font=15, text="한겨레", value="한겨레", bg="green", fg="white", variable=news_var).grid(row=0, column=3)
+radioHan = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="한겨레", value="한겨레", bg="green", fg="white", variable=newsVar, pady=15, command=selectedNews).grid(row=0, column=3)
 # 경향
-radioKyung = Radiobutton(newsFrame, width=15, font=15, text="경향", value="경향", bg="green", fg="white", variable=news_var).grid(row=0, column=4)
+radioKyung = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="경향", value="경향", bg="green", fg="white", variable=newsVar, pady=15, command=selectedNews).grid(row=0, column=4)
 
 newsFrame.pack(pady=5)
 newsFrame.place(x=10, y=70)
 
 # 섹션
 sectionFrame = Frame(root, bg="green", highlightthickness=2, highlightcolor="white")
-section_var = StringVar()
+sectionVar = StringVar()
+def selectedSection():
+    global sectionVar
+    sectionVar.get()
 # 사회
-radioSociety = Radiobutton(sectionFrame, width=15, font=15, text="사회", value="사회", bg="green", fg="white", variable=section_var, pady=15).grid(row=0, column = 0)
+radioSociety = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="사회", value="사회", bg="green", fg="white", variable=sectionVar, pady=15, command=selectedSection).grid(row=0, column = 0)
 # 정치
-radioPolitics = Radiobutton(sectionFrame, width=15, font=15, text="정치", value="정치", bg="green", fg="white", variable=section_var).grid(row=0, column = 1)
+radioPolitics = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="정치", value="정치", bg="green", fg="white", variable=sectionVar, pady=15, command=selectedSection).grid(row=0, column = 1)
 # 경제
-radioEconomy = Radiobutton(sectionFrame, width=15, font=15, text="경제", value="경제", bg="green", fg="white", variable=section_var).grid(row=0, column = 2)
+radioEconomy = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="경제", value="경제", bg="green", fg="white", variable=sectionVar, pady=15, command=selectedSection).grid(row=0, column = 2)
 # IT/과학
-radioIT = Radiobutton(sectionFrame, width=15, font=15, text="IT", value="IT", bg="green", fg="white", variable=section_var).grid(row=0, column = 3)
+radioIT = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="IT", value="IT", bg="green", fg="white", variable=sectionVar, pady=15, command=selectedSection).grid(row=0, column = 3)
 # sports
-radioSports = Radiobutton(sectionFrame, width=15, font=15, text="스포츠", value="스포츠", bg="green", fg="white", variable=section_var).grid(row=0, column = 4)
+radioSports = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="스포츠", value="스포츠", bg="green", fg="white", variable=sectionVar, pady=15, command=selectedSection).grid(row=0, column = 4)
 sectionFrame.pack(pady=5)
 sectionFrame.place(x=10, y=140)
 
@@ -112,6 +121,12 @@ def removeCal():
     if endCount == 1:
         endCount = 0
         endCal.place_forget()
+def searchNews():    
+    print("검색뉴스 : " + newsVar.get())
+    print("검색섹션 : " + sectionVar.get())
+    print("시작날짜 : " + startCal.get_date())
+    print("종료날짜 : " + endCal.get_date())
+    removeCal()
 
 # 시작날짜버튼
 startDateButton = Button(searchFrame, text="시작날짜", width=20, bg="green", fg="white", command=startCal)
@@ -124,7 +139,7 @@ endDateButton.pack(side="left", padx=20)
 searchEntry = Entry(searchFrame, width=30)
 searchEntry.pack(side="left", padx=20)
 # 검색버튼
-searchButton = Button(searchFrame, text="검색", width=20, bg="green", fg="white", command=removeCal)
+searchButton = Button(searchFrame, text="검색", width=20, bg="green", fg="white", command=searchNews)
 searchButton.pack(side="left", padx=20)
 
 searchFrame.pack(pady=5, fill="x")
