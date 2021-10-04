@@ -121,11 +121,15 @@ def removeCal():
     if endCount == 1:
         endCount = 0
         endCal.place_forget()
-def searchNews():    
+def searchNews():
+    global startCount    
     print("검색뉴스 : " + newsVar.get())
-    print("검색섹션 : " + sectionVar.get())
-    print("시작날짜 : " + startCal.get_date())
-    print("종료날짜 : " + endCal.get_date())
+    print("검색섹션 : " + sectionVar.get())    
+    if startCount != 0:
+        print("시작날짜 : " + startCal.get_date())
+    if endCount != 0:
+        print("종료날짜 : " + endCal.get_date())
+    print("검색어: " + searchEntry.get())
     removeCal()
 
 # 시작날짜버튼
