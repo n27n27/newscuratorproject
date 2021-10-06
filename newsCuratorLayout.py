@@ -36,7 +36,6 @@ headerFrame.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
 
 
 
-
 # 신문사
 newsFrame = Frame(root, bg="green", highlightcolor="white", highlightthickness=2)
 newsVar = StringVar()
