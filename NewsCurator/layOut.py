@@ -1,7 +1,5 @@
 from tkinter import *
 from tkcalendar import Calendar
-from functionTest import *
-
 
 # 메인
 def mainWindow():
