@@ -16,5 +16,7 @@ radioChosun = Radiobutton(width=15, font=15, text="조선일보", value="조선�
 radioChosun.pack()
 radioChosun1 = Radiobutton(width=15, font=15, text="조선일보", value="조선일보", fg="black", pady=15)
 radioChosun1.pack()
-
+testButton = Button(root, text="버튼", fg="black")
+testButton.pack()
+print(testButton.cget("text"))
 root.mainloop()
