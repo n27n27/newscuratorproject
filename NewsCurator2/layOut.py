@@ -22,36 +22,36 @@ def newsCuratorRun():
 class FooterFrame():
 
     def __init__(self, master):        
-        self.footerFrame = Frame(master, bg="green")
-        self.footerFrame.pack(fill="x", padx=5, pady=5)
-        self.footerFrame.place(x=10, y=750)
+        footerFrame = Frame(master, bg="green")
+        footerFrame.pack(fill="x", padx=5, pady=5)
+        footerFrame.place(x=10, y=750)
         
-        self.createLabel = Label(self.footerFrame, text="POWERD by Holistic Python", width=30, fg="white", bg="green", anchor=W, font="Helvetica 15 bold")
-        self.createLabel.pack(side="left")
+        createLabel = Label(footerFrame, text="POWERD by Holistic Python", width=30, fg="white", bg="green", anchor=W, font="Helvetica 15 bold")
+        createLabel.pack(side="left")
         
-        self.sortButton = Button(self.footerFrame, text="  ↘  정렬  ↗  ", width=50, bg="green", fg="white")
-        self.sortButton.pack(side="left", padx=20)
+        sortButton = Button(footerFrame, text="  ↘  정렬  ↗  ", width=50, bg="green", fg="white")
+        sortButton.pack(side="left", padx=20)
         
-        self.emailButton = Button(self.footerFrame, text="이메일발송", width=18, bg="green", fg="white")
-        self.emailButton.pack(side="left", padx=6)
+        emailButton = Button(footerFrame, text="이메일발송", width=18, bg="green", fg="white")
+        emailButton.pack(side="left", padx=6)
         
-        self.saveButton = Button(self.footerFrame, text="csv저장", width=18, bg="green", fg="white")
-        self.saveButton.pack(side="left", padx=6)
+        saveButton = Button(footerFrame, text="csv저장", width=18, bg="green", fg="white")
+        saveButton.pack(side="left", padx=6)
 
 # 리스트 프레임
 class ListFrame():
 
     def __init__(self, master):        
 
-        self.listFrame = Frame(master, bg="green")
-        self.listFrame.pack(fill="both", padx=5, pady=5)
-        self.listFrame.place(x=10, y=250)
-        self.scrollbar = Scrollbar(self.listFrame)
-        self.scrollbar.pack(side="right", fill="y")
+        listFrame = Frame(master, bg="green")
+        listFrame.pack(fill="both", padx=5, pady=5)
+        listFrame.place(x=10, y=250)
+        scrollbar = Scrollbar(listFrame)
+        scrollbar.pack(side="right", fill="y")
 
-        self.newsList = Listbox(self.listFrame, selectmode="extended", width=150, height=30, yscrollcommand=self.scrollbar.set, bg="green")
-        self.newsList.pack(fill="both", expand=True)
-        self.scrollbar.config(command=self.newsList.yview)
+        newsList = Listbox(listFrame, selectmode="extended", width=150, height=30, yscrollcommand=scrollbar.set, bg="green")
+        newsList.pack(fill="both", expand=True)
+        scrollbar.config(command=newsList.yview)
 
 # 캘린더 생성
 class CalMake():    
@@ -68,21 +68,21 @@ class SearchFrame():
     endCount = 0        
 
     def __init__(self, master):
-        self.searchFrame = Frame(master, bg="green")
-        self.searchFrame.pack(pady=5, fill="x")
-        self.searchFrame.place(x=10, y=210)        
+        searchFrame = Frame(master, bg="green")
+        searchFrame.pack(pady=5, fill="x")
+        searchFrame.place(x=10, y=210)        
         
-        self.startDateButton = Button(self.searchFrame, text="시작날짜", width=20, bg="green", fg="white", command=self.startCalMake)
-        self.startDateButton.pack(side="left", padx=20)
+        startDateButton = Button(searchFrame, text="시작날짜", width=20, bg="green", fg="white", command=self.startCalMake)
+        startDateButton.pack(side="left", padx=20)
         
-        self.endDateButton = Button(self.searchFrame, text="종료날짜", width=20, bg="green", fg="white", command=self.endCalMake)
-        self.endDateButton.pack(side="left", padx=20)
+        endDateButton = Button(searchFrame, text="종료날짜", width=20, bg="green", fg="white", command=self.endCalMake)
+        endDateButton.pack(side="left", padx=20)
 
-        self.searchEntry = Entry(self.searchFrame, width=30)
-        self.searchEntry.pack(side="left", padx=20)
+        searchEntry = Entry(searchFrame, width=30)
+        searchEntry.pack(side="left", padx=20)
 
-        self.searchButton = Button(self.searchFrame, text="검색", width=20, bg="green", fg="white", command=self.removeCal)
-        self.searchButton.pack(side="left", padx=20)
+        searchButton = Button(searchFrame, text="검색", width=20, bg="green", fg="white", command=self.removeCal)
+        searchButton.pack(side="left", padx=20)
 
     def startCalMake(self):        
            
@@ -120,11 +120,11 @@ class SearchFrame():
 class AdFrame():
 
     def __init__(self, master):
-        self.adFrame = Frame(master, bg="green", highlightthickness=2, highlightcolor="white")
-        self.adLabel=Label(self.adFrame, width=7, text="광고삽입", font='Helvetica 35 bold', fg="white", bg="green", anchor=CENTER, pady=50, padx=5)
-        self.adLabel.pack()
-        self.adFrame.pack(pady=5)
-        self.adFrame.place(x=860, y=70)            
+        adFrame = Frame(master, bg="green", highlightthickness=2, highlightcolor="white")
+        adLabel=Label(adFrame, width=7, text="광고삽입", font='Helvetica 35 bold', fg="white", bg="green", anchor=CENTER, pady=50, padx=5)
+        adLabel.pack()
+        adFrame.pack(pady=5)
+        adFrame.place(x=860, y=70)            
 
 # 섹션 프레임
 class SectionFrame():
@@ -133,15 +133,15 @@ class SectionFrame():
 
         self.sectionVar = StringVar()
 
-        self.sectionFrame = Frame(master, bg="green", highlightthickness=2, highlightcolor="white")    
-        self.sectionFrame.pack(pady=5)
-        self.sectionFrame.place(x=10, y=140)    
+        sectionFrame = Frame(master, bg="green", highlightthickness=2, highlightcolor="white")    
+        sectionFrame.pack(pady=5)
+        sectionFrame.place(x=10, y=140)    
 
-        self.radioSociety = Radiobutton(self.sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="사회", value="사회", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 0)    
-        self.radioPolitics = Radiobutton(self.sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="정치", value="정치", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 1)
-        self.radioEconomy = Radiobutton(self.sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="경제", value="경제", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 2)
-        self.radioIT = Radiobutton(self.sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="IT", value="IT", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 3)
-        self.radioSports = Radiobutton(self.sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="스포츠", value="스포츠", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 4)   
+        radioSociety = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="사회", value="사회", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 0)    
+        radioPolitics = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="정치", value="정치", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 1)
+        radioEconomy = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="경제", value="경제", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 2)
+        radioIT = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="IT", value="IT", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 3)
+        radioSports = Radiobutton(sectionFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="스포츠", value="스포츠", bg="green", fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 4)   
 
 # 뉴스 프레임
 class NewsFrame():    
@@ -149,15 +149,15 @@ class NewsFrame():
     def __init__(self, master) -> None:
 
         self.newsVar = StringVar()
-        self.newsFrame = Frame(master, bg="green", highlightcolor="white", highlightthickness=2)
-        self.newsFrame.pack(pady=5)
-        self.newsFrame.place(x=10, y=70)        
+        newsFrame = Frame(master, bg="green", highlightcolor="white", highlightthickness=2)
+        newsFrame.pack(pady=5)
+        newsFrame.place(x=10, y=70)        
 
-        self.radioChosun = Radiobutton(self.newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="조선일보", value="조선일보", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=0)
-        self.radioJungang = Radiobutton(self.newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="중앙일보", value="중앙일보", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=1)
-        self.radioDonga = Radiobutton(self.newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="동아일보", value="동아일보", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=2)
-        self.radioHan = Radiobutton(self.newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="한겨레", value="한겨레", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=3)
-        self.radioKyung = Radiobutton(self.newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="경향", value="경향", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=4) 
+        radioChosun = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="조선일보", value="조선일보", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=0)
+        radioJungang = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="중앙일보", value="중앙일보", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=1)
+        radioDonga = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="동아일보", value="동아일보", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=2)
+        radioHan = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="한겨레", value="한겨레", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=3)
+        radioKyung = Radiobutton(newsFrame, selectcolor="green", activebackground = "green", width=15, font=15, text="경향", value="경향", bg="green", fg="white", variable=self.newsVar, pady=15).grid(row=0, column=4) 
 
     def selectedNews(self):
         print(self.newsVar.get())
