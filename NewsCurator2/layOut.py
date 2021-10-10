@@ -12,7 +12,7 @@ def newsCuratorRun():
     root.resizable(False, False)
     root.configure(bg="green")
     headerFrame = HeaderFrame(root)
-    NewsFrame(root)
+    NewsFrame(root)                     
     SectionFrame(root)
     AdFrame(root)
     SearchFrame(root)
@@ -185,13 +185,12 @@ class LogInFrame():
         pwLabel.pack(side="right")
         self.logIn.place(x=600, y=12)
 
-# 회원 가입 창        
-
+# 회원 가입 창  
 def doJoin(x, y):
     global joinWindow
     joinWindow = Tk()
     joinWindow.title("회원가입")
-    joinWindow.geometry(f"{200}x{200}+{x}+{y}")
+    joinWindow.geometry(f"{200}x{200}+{x-80}+{y+20}")
     joinWindow.protocol("WM_DELETE_WINDOW", quitWindow)
     joinWindow.mainloop()
     
