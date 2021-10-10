@@ -1,5 +1,6 @@
 from tkinter import *
 from tkcalendar import Calendar
+import pyautogui
 #  객체생성
 root = Tk()
 # 제목설정
@@ -20,3 +21,6 @@ testButton = Button(root, text="버튼", fg="black")
 testButton.pack()
 print(testButton.cget("text"))
 root.mainloop()
+x, y = pyautogui.position()
+print(x)
+

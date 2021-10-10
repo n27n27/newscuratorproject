@@ -1,15 +1,17 @@
 from tkinter import *
 from tkcalendar import Calendar
+import pyautogui
 
 # 메인
 def newsCuratorRun():
     global root
+    global headerFrame
     root = Tk()
     root.title("News Curator")
     root.geometry("1100x800")
     root.resizable(False, False)
     root.configure(bg="green")
-    HeaderFrame(root)
+    headerFrame = HeaderFrame(root)
     NewsFrame(root)
     SectionFrame(root)
     AdFrame(root)
@@ -162,25 +164,73 @@ class NewsFrame():
     def selectedNews(self):
         print(self.newsVar.get())
 
+# logIn Frame
+class LogInFrame():
+
+    def __init__(self, master):        
+        self.logIn = Frame(master, bg="green")
+        self.logIn.pack(fill="x")
+
+        idLabel = Label(self.logIn, text="아이디", width=8, fg="white", bg="green", font=10, padx=4)
+        idLabel.pack(side="left")
+        idEntry = Entry(self.logIn, width=12, font=10)
+        idEntry.pack(side="left")
+
+        goButton = Button(self.logIn, text="Go", width=6, fg="white", bg="green", font=10)
+        goButton.pack(side="right", padx=15)
+
+        pwEntry = Entry(self.logIn, width=14, font=10)
+        pwLabel = Label(self.logIn, width=8, text="비밀번호", fg="white", bg="green", font=10, padx=4)
+        pwEntry.pack(side="right")
+        pwLabel.pack(side="right")
+        self.logIn.place(x=600, y=12)
+
+# 회원 가입 창        
+
+def doJoin(x, y):
+    global joinWindow
+    joinWindow = Tk()
+    joinWindow.title("회원가입")
+    joinWindow.geometry(f"{200}x{200}+{x}+{y}")
+    joinWindow.protocol("WM_DELETE_WINDOW", quitWindow)
+    joinWindow.mainloop()
+    
+def quitWindow():
+    joinWindow.destroy()
+    headerFrame.joinCount = 0
+
 # header frame
 class HeaderFrame():
+    
+    joinCount = 0               
 
     def __init__(self, master):
-        header = Frame(master, bg="green")
-        header.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
-        header.newsCuratorLabel = Label(header, text="뉴스 큐레이터", width=80, fg="white", bg="green", anchor=W, font='Helvetica 20 bold')
-        header.newsCuratorLabel.pack(fill="x", side="left")
+        self.header = Frame(master, bg="green")
+        self.header.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
+        self.header.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg="green", anchor=W, font='Helvetica 20 bold')
+        self.header.newsCuratorLabel.pack(fill="x", side="left")
 
-        header.logIn = Frame(header)
-        header.logIn.pack(fill="x")
+        self.innerFrame = Frame(self.header, bg="green")
+        self.innerFrame.place(x=800, y=12)
+        
+        self.joinUs = Button(self.innerFrame, text="회원가입", width=10, fg="white", bg="green", padx=3, command=self.joinUs)        
+        self.joinUs.pack(side="right", padx=20)        
 
-        header.idLabel = Label(header.logIn, text="아이디", width=10, fg="white", bg="green", font=15, padx=3)
-        header.idLabel.pack(side="left")
-        header.idEntry = Entry(header.logIn, width=15, font=15)
-        header.idEntry.pack(side="left")
+        logInButton = Button(self.innerFrame, text="로그인", width=10, fg="white", bg="green", padx=3, command=self.logIn)
+        logInButton.pack(side="right", padx=20)
 
-        header.pwEntry = Entry(header.logIn, width=15, font=15)
-        header.pwLabel = Label(header.logIn, width=10, text="비밀번호", fg="white", bg="green", font=15, padx=3)
-        header.pwEntry.pack(side="right")
-        header.pwLabel.pack(side="right")
-        header.logIn.place(x=600, y=12)    
+    def logIn(self):
+        self.innerFrame.destroy()
+        logInFrame = LogInFrame(self.header) 
+    
+    def joinUs(self):
+        
+        global x
+        global y
+        if self.joinCount == 0:
+            self.joinCount = 1
+            x, y = pyautogui.position()
+            doJoin(x, y)
+        else:
+            joinWindow.destroy()
+            self.joinCount = 0
