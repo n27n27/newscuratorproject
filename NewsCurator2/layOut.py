@@ -222,21 +222,28 @@ class LogInFrame():
 
     def __init__(self, master):        
         self.logIn = Frame(master, bg="#284922")
-        self.logIn.pack(fill="x")
+        self.logIn.pack(fill="x", ipady=5)
 
-        idLabel = Label(self.logIn, text="아이디", width=8, fg="white", bg="#284922", font=10, padx=4)
+        idLabel = Label(self.logIn, text="아이디", width=6, fg="white", bg="#284922", font=10, padx=10)
         idLabel.pack(side="left")
-        idEntry = Entry(self.logIn, width=12, font=10)
-        idEntry.pack(side="left")
+        idEntry = Entry(self.logIn, width=11, font=10)
+        idEntry.pack(side="left", padx=5)
 
-        goButton = Button(self.logIn, text="Go", width=6, fg="white", bg="#284922", font=10)
-        goButton.pack(side="right", padx=15)
+        backButton = Button(self.logIn, text="←", width=2, fg="white", bg="#284922", font=6, command=self.back)
+        backButton.pack(side="right", padx=7)
+        goButton = Button(self.logIn, text="Go", width=2, fg="white", bg="#284922", font=6)
+        goButton.pack(side="right", padx=7)
 
-        pwEntry = Entry(self.logIn, width=14, font=10)
-        pwLabel = Label(self.logIn, width=8, text="비밀번호", fg="white", bg="#284922", font=10, padx=4)
-        pwEntry.pack(side="right")
+        pwEntry = Entry(self.logIn, width=12, font=10)
+        pwLabel = Label(self.logIn, width=7, text="비밀번호", fg="white", bg="#284922", font=10, padx=10)
+        pwEntry.pack(side="right", padx=5)
         pwLabel.pack(side="right")
-        self.logIn.place(x=600, y=12)
+        self.logIn.place(x=630, y=12)
+
+    def back(self):
+        self.logIn.destroy()
+        headerFrame.innerFrame
+
 
 # 회원 가입 창  
 def doJoin(x, y):
