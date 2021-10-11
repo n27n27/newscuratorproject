@@ -244,23 +244,22 @@ class LogInFrame():
     def back(self):
         self.logIn.destroy()
         InnerFrame(headerFrame.header) 
-        
-# 회원 가입 창  
-def doJoin(x, y):
+
+
+# 회원 가입창
+class JoinUs():
     
-    global joinWindow
-    joinWindow = Tk()
-    joinWindow.title("회원가입")
-    joinWindow.geometry(f"{300}x{200}+{x-130}+{y+40}")
-    joinWindow.protocol("WM_DELETE_WINDOW", quitWindow)
-    joinWindow.mainloop()
-    
-def quitWindow():
-    joinWindow.destroy()
-    innerFrame.joinCount = 0
+    def __init__(self, master, x, y):
+        self.joinWindow = Toplevel(root, bg="#284922")
+        self.joinWindow.title("회원가입")
+        self.joinWindow.geometry(f"{300}x{200}+{x-130}+{y+40}")
+        self.joinWindow.protocol("WM_DELETE_WINDOW", self.quitWindow)    
+
+    def quitWindow(self):
+        self.joinWindow.destroy()
+        innerFrame.joinCount = 0 
 
 # inner frame
-
 class InnerFrame():
 
     joinCount = 0       
@@ -283,14 +282,14 @@ class InnerFrame():
         
         global x
         global y
+        
         if self.joinCount == 0:
             self.joinCount = 1
             x, y = pyautogui.position()
-            doJoin(x, y)
+            self.joinUsWindow = JoinUs(root, x, y)
         else:
-            joinWindow.destroy()
-            self.joinCount = 0
-
+            self.joinUsWindow.quitWindow()
+        
 # header frame
 class HeaderFrame():           
 
