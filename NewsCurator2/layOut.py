@@ -256,8 +256,8 @@ class JoinUs():
         self.joinWindow.protocol("WM_DELETE_WINDOW", self.quitWindow)    
 
     def quitWindow(self):
-        self.joinWindow.destroy()
         innerFrame.joinCount = 0 
+        self.joinWindow.destroy()        
 
 # inner frame
 class InnerFrame():
