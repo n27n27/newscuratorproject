@@ -252,9 +252,25 @@ class JoinUs():
     def __init__(self, master, x, y):
         self.joinWindow = Toplevel(root, bg="#284922")
         self.joinWindow.title("회원가입")
-        self.joinWindow.geometry(f"{300}x{200}+{x-130}+{y+40}")
-        self.joinWindow.protocol("WM_DELETE_WINDOW", self.quitWindow)    
+        self.joinWindow.geometry(f"{250}x{150}+{x-130}+{y+40}")
+        self.joinWindow.protocol("WM_DELETE_WINDOW", self.quitWindow)
 
+        labelFrame = Frame(self.joinWindow, padx=5, pady=5, bg="#284922")    
+        labelFrame.grid(row=0, column=0)
+
+        name = Label(labelFrame, text="Name", padx=5, pady=5, bg="#284922", fg="white").pack()
+        email = Label(labelFrame, text="e-mail", padx=5, pady=5, bg="#284922", fg="white").pack()
+        password = Label(labelFrame, text="Password", padx=5, pady=5, bg="#284922", fg="white").pack()
+        entryFrame = Frame(self.joinWindow, padx=5, pady=5, bg="#284922")
+        entryFrame.grid(row=0, column=1)
+
+        nameEntry = Entry(entryFrame).pack(padx=5, pady=5)
+        emailEntry = Entry(entryFrame).pack(padx=5, pady=5)
+        passwordEntry = Entry(entryFrame).pack(padx=5, pady=5)
+
+        joinButton = Button(self.joinWindow, text="회원가입", padx=10, bg="#284922", fg="white").grid(row=1, columnspan=5, pady=5)
+        
+        
     def quitWindow(self):
         innerFrame.joinCount = 0 
         self.joinWindow.destroy()        
