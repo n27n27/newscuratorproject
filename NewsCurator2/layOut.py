@@ -7,15 +7,16 @@ from datetime import *
 def newsCuratorRun():
     global root
     global headerFrame
-    global searchFrame    
+    global searchFrame
+    global innerFrame    
 
     root = Tk()
     root.title("News Curator")
     root.geometry("1100x800")
     root.resizable(False, False)
-    root.configure(bg="#284922")
-    
+    root.configure(bg="#284922")    
     headerFrame = HeaderFrame(root)
+    innerFrame = InnerFrame(headerFrame.header)
     NewsFrame(root)                     
     SectionFrame(root)
     AdFrame(root)
@@ -157,13 +158,13 @@ class SearchFrame():
 class CalError():   
 
     def __init__(self, master):
-        self.calModal = Toplevel(master)
+        self.calModal = Toplevel(master, bg="#284922")
         self.x, self.y = pyautogui.position()
         self.calModal.geometry(f"{300}x{90}+{self.x-450}+{self.y+50}")
         self.calModal.transient(master)
-        self.errorLabel = Label(self.calModal, text="날짜 정보를 올바르게 입력해주세요.", fg="black", font='Helvetica 12', pady=10, padx=10)
+        self.errorLabel = Label(self.calModal, text="날짜 정보를 올바르게 입력해주세요.", fg="white", font='Helvetica 12', pady=10, padx=10, bg="#284922")
         self.errorLabel.pack()
-        self.errorLabel1 = Label(self.calModal, text="종료날짜가 시작날짜 이전입니다.", fg="black", font='Helvetica 12', pady=10, padx=10)
+        self.errorLabel1 = Label(self.calModal, text="종료날짜가 시작날짜 이전입니다.", fg="white", font='Helvetica 12', pady=10, padx=10, bg="#284922")
         self.errorLabel1.pack()
         self.calModal.protocol("WM_DELETE_WINDOW", self.close)         
 
@@ -242,6 +243,7 @@ class LogInFrame():
 
     def back(self):
         self.logIn.destroy()
+        InnerFrame(headerFrame.header) 
         
 # 회원 가입 창  
 def doJoin(x, y):
@@ -249,29 +251,24 @@ def doJoin(x, y):
     global joinWindow
     joinWindow = Tk()
     joinWindow.title("회원가입")
-    joinWindow.geometry(f"{200}x{200}+{x-80}+{y+20}")
+    joinWindow.geometry(f"{300}x{200}+{x-130}+{y+40}")
     joinWindow.protocol("WM_DELETE_WINDOW", quitWindow)
     joinWindow.mainloop()
     
 def quitWindow():
     joinWindow.destroy()
-    headerFrame.joinCount = 0
+    innerFrame.joinCount = 0
 
+# inner frame
 
-# header frame
-class HeaderFrame():
-    
-    joinCount = 0               
+class InnerFrame():
+
+    joinCount = 0       
 
     def __init__(self, master):
-        self.header = Frame(master, bg="#284922")
-        self.header.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
-        self.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg="#284922", anchor=W, font='Helvetica 20 bold')
-        self.newsCuratorLabel.pack(fill="x", side="left")
-
-        self.innerFrame = Frame(self.header, bg="#284922")
+        self.innerFrame = Frame(master, bg="#284922")
         self.innerFrame.place(x=800, y=12)
-        
+
         self.joinUsButton = Button(self.innerFrame, text="회원가입", width=10, fg="white", bg="#284922", padx=3, command=self.joinUs)        
         self.joinUsButton.pack(side="right", padx=20)        
 
@@ -280,7 +277,7 @@ class HeaderFrame():
 
     def logIn(self):
         self.innerFrame.destroy()
-        logInFrame = LogInFrame(self.header) 
+        logInFrame = LogInFrame(headerFrame.header) 
     
     def joinUs(self):
         
@@ -293,3 +290,12 @@ class HeaderFrame():
         else:
             joinWindow.destroy()
             self.joinCount = 0
+
+# header frame
+class HeaderFrame():           
+
+    def __init__(self, master):
+        self.header = Frame(master, bg="#284922")
+        self.header.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
+        self.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg="#284922", anchor=W, font='Helvetica 20 bold')
+        self.newsCuratorLabel.pack(fill="x", side="left")
