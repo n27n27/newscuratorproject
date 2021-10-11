@@ -242,9 +242,7 @@ class LogInFrame():
 
     def back(self):
         self.logIn.destroy()
-        headerFrame.innerFrame
-
-
+        
 # 회원 가입 창  
 def doJoin(x, y):
     
@@ -259,6 +257,7 @@ def quitWindow():
     joinWindow.destroy()
     headerFrame.joinCount = 0
 
+
 # header frame
 class HeaderFrame():
     
@@ -267,8 +266,8 @@ class HeaderFrame():
     def __init__(self, master):
         self.header = Frame(master, bg="#284922")
         self.header.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
-        self.header.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg="#284922", anchor=W, font='Helvetica 20 bold')
-        self.header.newsCuratorLabel.pack(fill="x", side="left")
+        self.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg="#284922", anchor=W, font='Helvetica 20 bold')
+        self.newsCuratorLabel.pack(fill="x", side="left")
 
         self.innerFrame = Frame(self.header, bg="#284922")
         self.innerFrame.place(x=800, y=12)

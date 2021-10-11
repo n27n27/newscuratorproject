@@ -17,6 +17,9 @@ root.configure(bg="green")
 testCal = Calendar(root, date_pattern = "ymmdd")
 print(testCal.get_date())
 
+testButton = Button(root, text="테스트", fg="black")
+testButton.place(x=50, y=5)
+testButton.pack()
 
 
 def modalTest():
