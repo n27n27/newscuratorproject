@@ -15,7 +15,8 @@ word = "이재명"
 # print_result = [result for result in all_result if result["category"] == cg and result["newspaper"] == newpaper and word in result["title"]]
 
 # 복수 조건일 때의 조건 처리
-def apply_temrs(cgs, newspapers, word):
+def apply_temrs(cgs, newspapers, word):    
+
     showing_result = []
     for cg, newspaper in zip(cgs, newspapers):
         for result in all_result:

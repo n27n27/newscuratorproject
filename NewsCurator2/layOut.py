@@ -9,7 +9,9 @@ def newsCuratorRun():
     global headerFrame
     global searchFrame
     global innerFrame
-    global backGroundColor    
+    global backGroundColor
+    global sectionFrame
+    global newsFrame    
 
     backGroundColor = "#284922"
     root = Tk()
@@ -19,8 +21,8 @@ def newsCuratorRun():
     root.configure(bg=backGroundColor)    
     headerFrame = HeaderFrame(root)
     innerFrame = InnerFrame(headerFrame.header)
-    NewsFrame(root)                     
-    SectionFrame(root)
+    newsFrame = NewsFrame(root)                     
+    sectionFrame = SectionFrame(root)
     AdFrame(root)
     searchFrame = SearchFrame(root)
     ListFrame(root)
@@ -118,7 +120,18 @@ class SearchFrame():
             CalError(root)  
 
     # 검색    
-    def search(self):             
+    def search(self):
+        searchSection = []
+        searchNews = []
+        for i in range(len(sectionFrame.sectionVar)):
+            if sectionFrame.sectionVar[i].get() != "":
+                searchSection.append(sectionFrame.sectionVar[i].get())
+
+            if newsFrame.newsVar[i].get() != "":
+                searchNews.append(newsFrame.newsVar[i].get())
+
+        print(searchSection, searchNews)
+        
         self.dateSet()
         self.removeCal()
 
@@ -187,39 +200,44 @@ class AdFrame():
 # 섹션 프레임
 class SectionFrame():
 
-    def __init__(self, master):
-
-        self.sectionVar = StringVar()
+    def __init__(self, master):        
 
         sectionFrame = Frame(master, bg=backGroundColor, highlightthickness=2, highlightcolor="white")    
         sectionFrame.pack(pady=5)
-        sectionFrame.place(x=10, y=140)    
+        sectionFrame.place(x=10, y=140)
 
-        radioSociety = Radiobutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="사회", value="사회", bg=backGroundColor, fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 0)    
-        radioPolitics = Radiobutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="정치", value="정치", bg=backGroundColor, fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 1)
-        radioEconomy = Radiobutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="경제", value="경제", bg=backGroundColor, fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 2)
-        radioIT = Radiobutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="IT", value="IT", bg=backGroundColor, fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 3)
-        radioSports = Radiobutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="스포츠", value="스포츠", bg=backGroundColor, fg="white", variable=self.sectionVar, pady=15).grid(row=0, column = 4)   
+        self.sectionVar = []
 
+        for i in range(5):
+            self.sectionVar.append(0)
+            self.sectionVar[i] = StringVar()
+        
+        checkSociety = Checkbutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="사회", bg=backGroundColor, fg="white", pady=15, variable=self.sectionVar[0], onvalue="사회", offvalue="").grid(row=0, column = 0)    
+        checkPolitics = Checkbutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="정치", bg=backGroundColor, fg="white", pady=15, variable=self.sectionVar[1], onvalue="정치", offvalue="").grid(row=0, column = 1)
+        checkEconomy = Checkbutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="경제", bg=backGroundColor, fg="white",  pady=15, variable=self.sectionVar[2], onvalue="경제", offvalue="").grid(row=0, column = 2)
+        checkIT = Checkbutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="IT", bg=backGroundColor, fg="white", pady=15, variable=self.sectionVar[3], onvalue="IT", offvalue="").grid(row=0, column = 3)
+        checkSports = Checkbutton(sectionFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="스포츠", bg=backGroundColor, fg="white", pady=15, variable=self.sectionVar[4], onvalue="스포츠", offvalue="").grid(row=0, column = 4)      
+        
 # 뉴스 프레임
 class NewsFrame():    
     
     def __init__(self, master) -> None:
-
-        self.newsVar = StringVar()
+        
         newsFrame = Frame(master, bg=backGroundColor, highlightcolor="white", highlightthickness=2)
         newsFrame.pack(pady=5)
         newsFrame.place(x=10, y=70)        
+        
+        self.newsVar = []
 
-        radioChosun = Radiobutton(newsFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="조선일보", value="조선일보", bg=backGroundColor, fg="white", variable=self.newsVar, pady=15).grid(row=0, column=0)
-        radioJungang = Radiobutton(newsFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="중앙일보", value="중앙일보", bg=backGroundColor, fg="white", variable=self.newsVar, pady=15).grid(row=0, column=1)
-        radioDonga = Radiobutton(newsFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="동아일보", value="동아일보", bg=backGroundColor, fg="white", variable=self.newsVar, pady=15).grid(row=0, column=2)
-        radioHan = Radiobutton(newsFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="한겨레", value="한겨레", bg=backGroundColor, fg="white", variable=self.newsVar, pady=15).grid(row=0, column=3)
-        radioKyung = Radiobutton(newsFrame, selectcolor=backGroundColor, activebackground = backGroundColor, width=15, font=15, text="경향", value="경향", bg=backGroundColor, fg="white", variable=self.newsVar, pady=15).grid(row=0, column=4) 
-
-    def selectedNews(self):
-        print(self.newsVar.get())
-
+        for i in range(5):
+            self.newsVar.append(0)
+            self.newsVar[i] = StringVar()
+        checkChosun = Checkbutton(newsFrame, text="조선일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[0], onvalue="조선일보", offvalue="").grid(row=0, column=0)
+        checkJungang = Checkbutton(newsFrame, text="중앙일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[1], onvalue="중앙일보", offvalue="").grid(row=0, column=1)
+        checkDonga = Checkbutton(newsFrame, text="동아일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[2], onvalue="동아일보", offvalue="").grid(row=0, column=2)
+        checkHan = Checkbutton(newsFrame, text="한겨레", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[3], onvalue="한겨레", offvalue="").grid(row=0, column=3)
+        checkKyung = Checkbutton(newsFrame, text="경향", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[4], onvalue="경향", offvalue="").grid(row=0, column=4)        
+    
 # logIn Frame
 class LogInFrame():
 

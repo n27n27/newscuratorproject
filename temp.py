@@ -26,16 +26,16 @@ testButton = Button(root, text="테스트", fg="black", command=ccc)
 testButton.place(x=50, y=5)
 testButton.pack()
 ChkVar = []
-var = IntVar()
+abc = Frame(root)
+abc.pack()
 for i in range(0, 2):
     ChkVar.append(0)
     ChkVar[i] = IntVar()
 
-checkbutton1 = Checkbutton(root, text="체크1", bg="green", fg="white", selectcolor="green", variable=var)
-checkbutton1.pack()
+checkbutton1 = Checkbutton(abc, text="체크1", bg="green", fg="white", selectcolor="green", variable=ChkVar[0]).grid(row=0, column=0)
 
-checkbutton2 = Checkbutton(root, text="체크1", bg="green", fg="white", selectcolor="green", variable=ChkVar[1])
-checkbutton2.pack()
+checkbutton2 = Checkbutton(abc, text="체크1", bg="green", fg="white", selectcolor="green", variable=ChkVar[1]).grid(row=0, column=1)
+
 
 
 
