@@ -90,6 +90,7 @@ def extract_each_page(url, cg, date):
     return result
 
 # 사용자 입력 기간 동안의 기사 추출(각 날짜에서 extract_each_date 실행)
+
 def extract_each_date(url, cg, sd, ed):
     date_lst = get_date_lst(sd, ed)
     result = []

@@ -22,14 +22,20 @@ def apply_temrs(cgs, newspapers, word):
         for result in all_result:
             if result["category"] == cg:
                 showing_result.append(result)
-    
+    print(showing_result)
+    print("======================================================================================================")
     for newspaper in newspapers:
         for result in showing_result:
             if result["newspaper"] != newspaper:
                 showing_result.remove(result)
-                
+    print(showing_result)            
     if word is not None:
         for result in showing_result:
             if not(word in showing_result["title"]):
-                showing_result.result.remove(result)
+                showing_result.remove(result)
     return showing_result
+
+gs = ["정치", "사회"]
+news = ["중앙잉보", "한겨례"]
+word = "홍준표"
+print(apply_temrs(gs, news, word))

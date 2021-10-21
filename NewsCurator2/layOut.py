@@ -2,6 +2,8 @@ from tkinter import *
 from tkcalendar import Calendar
 import pyautogui
 from datetime import *
+import requests
+from bs4 import BeautifulSoup 
 
 # 메인
 def newsCuratorRun():
@@ -35,10 +37,10 @@ class FooterFrame():
     def __init__(self, master):        
         footerFrame = Frame(master, bg=backGroundColor)
         footerFrame.pack(fill="x", padx=5, pady=5)
-        footerFrame.place(x=10, y=750)
+        footerFrame.place(x=10, y=750)                        
         
-        createLabel = Label(footerFrame, text="POWERD by Holistic Python", width=30, fg="white", bg=backGroundColor, anchor=W, font="Helvetica 15 bold")
-        createLabel.pack(side="left")
+        createLabel = Label(footerFrame, text="POWERD by Holistic Python", fg="white", bg=backGroundColor,font="Helvetica 15 bold", anchor=W)
+        createLabel.pack(fill=X, side=LEFT, padx=30)
         
         sortButton = Button(footerFrame, text="  ↘  정렬  ↗  ", width=50, bg=backGroundColor, fg="white")
         sortButton.pack(side="left", padx=20)
@@ -57,12 +59,37 @@ class ListFrame():
         listFrame = Frame(master, bg=backGroundColor)
         listFrame.pack(fill="both", padx=5, pady=5)
         listFrame.place(x=10, y=250)
-        scrollbar = Scrollbar(listFrame)
-        scrollbar.pack(side="right", fill="y")
+        
+        leftFrame = Frame(listFrame)
+        leftFrame.pack(side=LEFT)
 
-        newsList = Listbox(listFrame, selectmode="extended", width=150, height=30, yscrollcommand=scrollbar.set, bg=backGroundColor)
-        newsList.pack(fill="both", expand=True)
-        scrollbar.config(command=newsList.yview)
+        rightFrame = Frame(listFrame)
+        rightFrame.pack(side=RIGHT)
+
+        leftScrollbar = Scrollbar(leftFrame)
+        leftScrollbar.pack(side=RIGHT, fill=Y)
+        
+        leftNewsList = Listbox(leftFrame, selectmode="extended", width=72, height=30, yscrollcommand=leftScrollbar.set, bg=backGroundColor, fg="white")
+        leftNewsList.pack(side="left", fill="both", expand=True)
+        
+        leftScrollbar.config(command=leftNewsList.yview)
+        for line in range(1, 60):
+            
+            leftNewsList.insert(line, "뉴스" + str(line))
+            leftNewsList.insert(line, "내용" + str(line))
+              
+        rightScrollbar = Scrollbar(rightFrame)
+        rightScrollbar.pack(side=RIGHT, fill=Y)
+
+        rightNewsList = Listbox(rightFrame, selectmode="extended", width=72, height=30, yscrollcommand=rightScrollbar.set, bg=backGroundColor, fg="white")
+        rightNewsList.pack(side="left", fill="both", expand=True)
+
+        rightScrollbar.config(command=rightNewsList.yview)
+
+        for line in range(1, 90):
+            
+            rightNewsList.insert(line, "어디" + str(line))          
+        
 
 # 캘린더 생성
 class CalMake():    
@@ -70,7 +97,135 @@ class CalMake():
     def __init__(self, master):
         self.newsCal = Calendar(master, date_pattern = "ymmdd")
         self.newsCal.pack(pady=10)    
+
+class NewsScraper():
+
+    def __init__(self):        
+
+        self.sd = searchFrame.startDate
+        self.ed = searchFrame.endDate
+        self.HEADERS = {
+        "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
+        "Accept-Language" : "ko-KR,ko"
+        }
+
+        self.URL = "https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&"
+
+        self.URLS = {
+            "POLITICS": self.URL + "sid1=100&sid2=269&date=",
+            "ECONOMY" : self.URL + "sid1=101&sid2=263&date=",
+            "SOCIETY" : self.URL + "sid1=102&sid2=257&date=",
+            "TECH" : self.URL + "sid2=230&sid1=105&date="
+        }
+
+    # soup 객체 생성
+    def makeSoup(self, url):
         
+        res = requests.get(url, headers=self.HEADERS)
+        res.raise_for_status()
+
+        self.soup = BeautifulSoup(res.text, 'html.parser')
+        return self.soup
+
+    # article container 추출(ul)
+    def extract_container(self, url):
+        self.soup = self.makeSoup(url)
+        self.containers = self.soup.find("div", {"class": "list_body newsflash_body"}).find_all("ul")
+        return self.containers
+
+    # container에서 각각의 article(ul) 추출
+    def extract_each_article(self, url, cg, date):
+        self.containers = self.extract_container(url)
+        self.newspaper_list = [
+            "중앙일보", 
+            "동아일보", 
+            "조선일보", 
+            "한겨례", 
+            "경향신문"
+            ]
+        self.result = []
+        for container in self.containers:
+            ul = container.find_all("dl")
+            
+            for each in ul:
+                newspaper = each.find("span", {"class": "writing"}).text.strip()
+                if not(newspaper in self.newspaper_list):
+                    continue
+                title = each.find_all("dt")[-1].text.strip()
+                link = each.find("a")["href"]
+                self.result.append({
+                    "date" : date,
+                    "category" : cg,
+                    "title" : title,
+                    "newspaper" : newspaper,
+                    "link" : link
+                })
+
+        return self.result
+
+    # 마지막 page 찾음
+    def find_last_page(self, url):
+        soup = self.makeSoup(url)
+        next_page = soup.find("div", {"class": "paging"}).find_all("a")
+
+        while True:
+            if len(next_page) >= 10:
+                next_url = "https://news.naver.com/main/list.naver" + next_page[-1]["href"]
+                
+                soup = self.makeSoup(next_url)
+                next_page = soup.find("div", {"class": "paging"}).find_all("a")
+                continue
+            else:
+                try:
+                    self.last_page = int(next_page[-1].text)
+                except:
+                    self.last_page = int(soup.find("div", {"class" : "paging"}).find("strong").text)
+            return self.last_page
+
+    # 각 페이지에서 기사 추출(각 페이지에서 extract_each_article 실행)
+    def extract_each_page(self, url, cg, date):
+        last_page = self.find_last_page(url)
+        self.result = []
+        for n in range(1, last_page + 1):
+            print(f"Now scrapping page {n} / {last_page} in {cg}")
+            new_url = url + "&page=" +str(n)
+            page_result = self.extract_each_article(new_url, cg, date)
+            self.result += page_result
+        return self.result   
+
+    # 사용자 입력 기간 동안의 기사 추출(각 날짜에서 extract_each_date 실행)
+
+    def extract_each_date(self, url, cg, sd, ed):
+        date_lst = searchFrame.getDateList(sd, ed)
+        self.result = []
+        for date in date_lst:
+            print(f"Now scraping {date} / {date_lst[-1]} in {cg}")
+            new_url = url + date
+            date_result = self.extract_each_page(new_url, cg, date)
+            self.result += date_result
+        return self.result
+
+    def extract_politics_section(self, sd, ed):
+        url = self.URLS["POLITICS"]
+        return self.extract_each_date(url, "정치", sd, ed)
+
+    def extract_economy_section(self, sd, ed):
+        url = self.URLS["ECONOMY"]
+        return self.extract_each_date(url, "경제", sd, ed)
+
+    def extract_society_section(self, sd, ed):
+        url = self.URLS["SOCIETY"]
+        return self.extract_each_date(url, "사회", sd, ed)
+
+    def extract_tech_section(self, sd, ed):
+        url = self.URLS["TECH"]
+        return self.extract_each_date(url, "IT", sd, ed)    
+
+    def extract_article(self, sd, ed, cg):
+        self.url = self.URLS[cg]
+        return self.extract_each_date(self.url, cg, sd, ed)    
+
+
 # 검색 프레임
 class SearchFrame():    
 
@@ -89,11 +244,28 @@ class SearchFrame():
         endDateButton = Button(self.searchFrame, text="종료날짜", width=20, bg=backGroundColor, fg="white", command=self.endCalMake)
         endDateButton.pack(side="left", padx=20)
 
-        searchEntry = Entry(self.searchFrame, width=30)
-        searchEntry.pack(side="left", padx=20)
+        self.searchEntry = Entry(self.searchFrame, width=30)
+        self.searchEntry.pack(side="left", padx=20)
 
         searchButton = Button(self.searchFrame, text="검색", width=20, bg=backGroundColor, fg="white", command=self.search)
         searchButton.pack(side="left", padx=20)
+
+    # 검색날짜 리스트
+    def getDateList(self, sdate, edate):
+
+        sd = sdate
+        ed = edate
+
+        dateDiff = int(ed) - int(sd)
+        sd = datetime.strptime(sd, "%Y%m%d")    
+
+        dateList = []
+
+        for i in range(dateDiff + 1):
+            date = (sd + timedelta(i)).strftime("%Y%m%d")
+            dateList.append(date)
+        
+        return dateList
 
     # 검색날짜 세팅
     def dateSet(self):
@@ -102,38 +274,71 @@ class SearchFrame():
 
         # 시작날짜(없으면 오늘)
         if self.startCount != 0:
-           startDate = self.startCal.newsCal.get_date()       
+           self.startDate = self.startCal.newsCal.get_date()       
         else:
-            startDate = now
+            self.startDate = now
 
         # 종료날짜(없으면 오늘)
         if self.endCount != 0:
-            endDate = self.endCal.newsCal.get_date()
+            self.endDate = self.endCal.newsCal.get_date()
         else:
-            endDate = now
+            self.endDate = now
         
-        if int(endDate) > int(now):
-            endDate = now       
+        if int(self.endDate) > int(now):
+            self.endDate = now       
         
-        if int(startDate) > int(endDate):
+        if int(self.startDate) > int(self.endDate):
             root.wm_attributes("-disabled", True)
             CalError(root)  
+
+
 
     # 검색    
     def search(self):
         searchSection = []
         searchNews = []
+        searchWord = self.searchEntry.get()
         for i in range(len(sectionFrame.sectionVar)):
             if sectionFrame.sectionVar[i].get() != "":
                 searchSection.append(sectionFrame.sectionVar[i].get())
 
             if newsFrame.newsVar[i].get() != "":
-                searchNews.append(newsFrame.newsVar[i].get())
-
-        print(searchSection, searchNews)
+                searchNews.append(newsFrame.newsVar[i].get())        
         
         self.dateSet()
         self.removeCal()
+
+        newsScraper = NewsScraper()
+        
+        politics_result = newsScraper.extract_politics_section(newsScraper.sd, newsScraper.ed)
+        economy_result = newsScraper.extract_economy_section(newsScraper.sd, newsScraper.ed)
+        society_result = newsScraper.extract_society_section(newsScraper.sd, newsScraper.ed)
+        tech_result = newsScraper.extract_tech_section(newsScraper.sd, newsScraper.ed)
+        self.all_result = politics_result + economy_result + society_result + tech_result
+        self.apply_temrs(searchSection, searchNews, searchWord)
+
+    def apply_temrs(self, cgs, newspapers, word):    
+
+        showing_result = []
+        for cg, newspaper in zip(cgs, newspapers):
+            for result in self.all_result:
+                if result["category"] == cg:
+                    showing_result.append(result)
+        
+        for newspaper in newspapers:
+            for result in showing_result:
+                if result["newspaper"] != newspaper:
+                    showing_result.remove(result)
+        
+        if word is not None:
+            for result in showing_result:
+                if not(word in result["title"]):
+                    showing_result.remove(result)
+        return showing_result    
+
+
+        print(searchSection, searchNews)
+        print(self.getDateList())
 
     # 시작달력
     def startCalMake(self):        
@@ -244,11 +449,11 @@ class LogInFrame():
     def __init__(self, master):        
         self.logIn = Frame(master, bg=backGroundColor)
         self.logIn.pack(fill="x", ipady=5)
-
-        idLabel = Label(self.logIn, text="아이디", width=6, fg="white", bg=backGroundColor, font=10, padx=10)
+        idImg = PhotoImage(file = "images/id_icon.png")
+        idLabel = Label(self.logIn, text="아이디", width=55, image=idImg, compound=BOTTOM, fg="white", bg=backGroundColor, font=10)
         idLabel.pack(side="left")
-        idEntry = Entry(self.logIn, width=11, font=10)
-        idEntry.pack(side="left", padx=5)
+        # idEntry = Entry(self.logIn, width=11, font=10)
+        # idEntry.pack(side="left", padx=5)
 
         backButton = Button(self.logIn, text="←", width=2, fg="white", bg=backGroundColor, font=6, command=self.back)
         backButton.pack(side="right", padx=7)
@@ -334,3 +539,11 @@ class HeaderFrame():
         self.header.pack(fill="x", padx=5, pady=5, ipadx=10, ipady=10)
         self.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg=backGroundColor, anchor=W, font='Helvetica 20 bold')
         self.newsCuratorLabel.pack(fill="x", side="left")
+
+
+
+def run():
+    newsCuratorRun()
+
+if __name__ == "__main__":
+    run()

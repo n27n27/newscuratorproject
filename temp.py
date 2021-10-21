@@ -3,6 +3,7 @@ from babel.dates import DateTimePattern
 from tkcalendar import Calendar
 import pyautogui
 from datetime import *
+
 #  객체생성
 root = Tk()
 # 제목설정
@@ -13,6 +14,16 @@ root.geometry("300x200")
 root.resizable(False, False)
 # 배경화면 녹색
 root.configure(bg="green")
+
+
+imgObj = PhotoImage(file = "images/holy.png")
+
+       
+compLabel = Label(root, image=imgObj, text="이것은 글씨", compound=RIGHT)
+# compLabel["image"] = imgObj
+# compLabel["text"] = "이것은 글씨"
+# compLabel["compound"] = "left"
+compLabel.pack()
 
 testCal = Calendar(root, date_pattern = "ymmdd")
 print(testCal.get_date())
@@ -35,6 +46,25 @@ for i in range(0, 2):
 checkbutton1 = Checkbutton(abc, text="체크1", bg="green", fg="white", selectcolor="green", variable=ChkVar[0]).grid(row=0, column=0)
 
 checkbutton2 = Checkbutton(abc, text="체크1", bg="green", fg="white", selectcolor="green", variable=ChkVar[1]).grid(row=0, column=1)
+
+listFrame = Frame(root)
+listFrame.pack()
+
+lists = Listbox(listFrame)
+lists.pack(side=LEFT, fill=Y)
+scrollbar = Scrollbar(listFrame, command=lists.yview)
+scrollbar.pack(side=RIGHT, fill=Y)
+lists.config(yscrollcommand=scrollbar.set)
+# for x in range(100):
+#     text1 = "text" + str(x)
+#     label1 = Label(lists, text=text1)
+#     lists.insert(END, "")
+#     label1.pack()
+    
+#     # lists.insert(END, str(x))
+lists.insert(END, "끝")
+
+
 
 
 
