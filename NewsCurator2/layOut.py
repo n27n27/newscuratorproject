@@ -134,8 +134,10 @@ class NewsScraper():
             "한겨례", 
             "경향"
             ]
+
         self.result = []
         for container in self.containers:
+
             ul = container.find_all("dl")
             
             for each in ul:
@@ -281,13 +283,18 @@ class SearchFrame():
                 searchNews.append(newsFrame.newsVar[i].get())                
         
         search_list = self.apply_temrs(searchSection, searchNews, searchWord)
+
+        # 화면 초기화
         listFrame.leftNewsList.delete(0, END)
+
+        # 검색결과 화면에 뿌리기
         for list in search_list:
             listFrame.leftNewsList.insert(END, f'{list["date"]} {list["category"]} {list["newspaper"]}')  
             listFrame.leftNewsList.insert(END, f'{list["title"]}')
             listFrame.leftNewsList.insert(END, f'{list["link"]}')        
             listFrame.leftNewsList.insert(END, "")
 
+    # 카테고리면 데이터 결과 추가하기
     def apply_temrs(self, cgs, newspapers, word):
 
         newsScraper = NewsScraper()
