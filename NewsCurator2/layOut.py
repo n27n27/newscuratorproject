@@ -3,7 +3,7 @@ from tkcalendar import Calendar
 import pyautogui
 from datetime import *
 import requests
-from bs4 import BeautifulSoup 
+from bs4 import BeautifulSoup
 
 # 메인
 def newsCuratorRun():
@@ -14,6 +14,7 @@ def newsCuratorRun():
     global backGroundColor
     global sectionFrame
     global newsFrame    
+    global listFrame
 
     backGroundColor = "#284922"
     root = Tk()
@@ -27,7 +28,7 @@ def newsCuratorRun():
     sectionFrame = SectionFrame(root)
     AdFrame(root)
     searchFrame = SearchFrame(root)
-    ListFrame(root)
+    listFrame = ListFrame(root)
     FooterFrame(root)    
     root.mainloop()
 
@@ -69,14 +70,10 @@ class ListFrame():
         leftScrollbar = Scrollbar(leftFrame)
         leftScrollbar.pack(side=RIGHT, fill=Y)
         
-        leftNewsList = Listbox(leftFrame, selectmode="extended", width=72, height=30, yscrollcommand=leftScrollbar.set, bg=backGroundColor, fg="white")
-        leftNewsList.pack(side="left", fill="both", expand=True)
+        self.leftNewsList = Listbox(leftFrame, selectmode="extended", width=72, height=30, yscrollcommand=leftScrollbar.set, bg=backGroundColor, fg="white")
+        self.leftNewsList.pack(side="left", fill="both", expand=True)
         
-        leftScrollbar.config(command=leftNewsList.yview)
-        for line in range(1, 60):
-            
-            leftNewsList.insert(line, "뉴스" + str(line))
-            leftNewsList.insert(line, "내용" + str(line))
+        leftScrollbar.config(command=self.leftNewsList.yview)        
               
         rightScrollbar = Scrollbar(rightFrame)
         rightScrollbar.pack(side=RIGHT, fill=Y)
@@ -84,11 +81,7 @@ class ListFrame():
         rightNewsList = Listbox(rightFrame, selectmode="extended", width=72, height=30, yscrollcommand=rightScrollbar.set, bg=backGroundColor, fg="white")
         rightNewsList.pack(side="left", fill="both", expand=True)
 
-        rightScrollbar.config(command=rightNewsList.yview)
-
-        for line in range(1, 90):
-            
-            rightNewsList.insert(line, "어디" + str(line))          
+        rightScrollbar.config(command=rightNewsList.yview)        
         
 
 # 캘린더 생성
@@ -101,9 +94,7 @@ class CalMake():
 class NewsScraper():
 
     def __init__(self):        
-
-        self.sd = searchFrame.startDate
-        self.ed = searchFrame.endDate
+        
         self.HEADERS = {
         "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
         "Accept-Language" : "ko-KR,ko"
@@ -112,10 +103,10 @@ class NewsScraper():
         self.URL = "https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&"
 
         self.URLS = {
-            "POLITICS": self.URL + "sid1=100&sid2=269&date=",
-            "ECONOMY" : self.URL + "sid1=101&sid2=263&date=",
-            "SOCIETY" : self.URL + "sid1=102&sid2=257&date=",
-            "TECH" : self.URL + "sid2=230&sid1=105&date="
+            "정치": self.URL + "sid1=100&sid2=269&date=",
+            "경제" : self.URL + "sid1=101&sid2=263&date=",
+            "사회" : self.URL + "sid1=102&sid2=257&date=",
+            "IT" : self.URL + "sid2=230&sid1=105&date="
         }
 
     # soup 객체 생성
@@ -141,7 +132,7 @@ class NewsScraper():
             "동아일보", 
             "조선일보", 
             "한겨례", 
-            "경향신문"
+            "경향"
             ]
         self.result = []
         for container in self.containers:
@@ -204,22 +195,7 @@ class NewsScraper():
             date_result = self.extract_each_page(new_url, cg, date)
             self.result += date_result
         return self.result
-
-    def extract_politics_section(self, sd, ed):
-        url = self.URLS["POLITICS"]
-        return self.extract_each_date(url, "정치", sd, ed)
-
-    def extract_economy_section(self, sd, ed):
-        url = self.URLS["ECONOMY"]
-        return self.extract_each_date(url, "경제", sd, ed)
-
-    def extract_society_section(self, sd, ed):
-        url = self.URLS["SOCIETY"]
-        return self.extract_each_date(url, "사회", sd, ed)
-
-    def extract_tech_section(self, sd, ed):
-        url = self.URLS["TECH"]
-        return self.extract_each_date(url, "IT", sd, ed)    
+    
 
     def extract_article(self, sd, ed, cg):
         self.url = self.URLS[cg]
@@ -251,10 +227,7 @@ class SearchFrame():
         searchButton.pack(side="left", padx=20)
 
     # 검색날짜 리스트
-    def getDateList(self, sdate, edate):
-
-        sd = sdate
-        ed = edate
+    def getDateList(self, sd, ed):        
 
         dateDiff = int(ed) - int(sd)
         sd = datetime.strptime(sd, "%Y%m%d")    
@@ -292,53 +265,44 @@ class SearchFrame():
             CalError(root)  
 
 
-
     # 검색    
     def search(self):
+        self.dateSet()
+        self.removeCal()
         searchSection = []
         searchNews = []
         searchWord = self.searchEntry.get()
+        
         for i in range(len(sectionFrame.sectionVar)):
             if sectionFrame.sectionVar[i].get() != "":
                 searchSection.append(sectionFrame.sectionVar[i].get())
 
             if newsFrame.newsVar[i].get() != "":
-                searchNews.append(newsFrame.newsVar[i].get())        
+                searchNews.append(newsFrame.newsVar[i].get())                
         
-        self.dateSet()
-        self.removeCal()
+        search_list = self.apply_temrs(searchSection, searchNews, searchWord)
+        listFrame.leftNewsList.delete(0, END)
+        for list in search_list:
+            listFrame.leftNewsList.insert(END, f'{list["date"]} {list["category"]} {list["newspaper"]}')  
+            listFrame.leftNewsList.insert(END, f'{list["title"]}')
+            listFrame.leftNewsList.insert(END, f'{list["link"]}')        
+            listFrame.leftNewsList.insert(END, "")
+
+    def apply_temrs(self, cgs, newspapers, word):
 
         newsScraper = NewsScraper()
-        
-        politics_result = newsScraper.extract_politics_section(newsScraper.sd, newsScraper.ed)
-        economy_result = newsScraper.extract_economy_section(newsScraper.sd, newsScraper.ed)
-        society_result = newsScraper.extract_society_section(newsScraper.sd, newsScraper.ed)
-        tech_result = newsScraper.extract_tech_section(newsScraper.sd, newsScraper.ed)
-        self.all_result = politics_result + economy_result + society_result + tech_result
-        self.apply_temrs(searchSection, searchNews, searchWord)
-
-    def apply_temrs(self, cgs, newspapers, word):    
-
         showing_result = []
-        for cg, newspaper in zip(cgs, newspapers):
-            for result in self.all_result:
-                if result["category"] == cg:
-                    showing_result.append(result)
         
-        for newspaper in newspapers:
-            for result in showing_result:
-                if result["newspaper"] != newspaper:
-                    showing_result.remove(result)
+        for cg in cgs:
+            result = newsScraper.extract_article(searchFrame.startDate, searchFrame.endDate, cg)            
+            showing_result += result
         
-        if word is not None:
-            for result in showing_result:
-                if not(word in result["title"]):
-                    showing_result.remove(result)
-        return showing_result    
+        for result in showing_result:
 
-
-        print(searchSection, searchNews)
-        print(self.getDateList())
+            if result["newspaper"] not in newspapers or word not in result["title"]:
+                showing_result.remove(result)            
+        
+        return showing_result            
 
     # 시작달력
     def startCalMake(self):        
@@ -437,6 +401,7 @@ class NewsFrame():
         for i in range(5):
             self.newsVar.append(0)
             self.newsVar[i] = StringVar()
+            
         checkChosun = Checkbutton(newsFrame, text="조선일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[0], onvalue="조선일보", offvalue="").grid(row=0, column=0)
         checkJungang = Checkbutton(newsFrame, text="중앙일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[1], onvalue="중앙일보", offvalue="").grid(row=0, column=1)
         checkDonga = Checkbutton(newsFrame, text="동아일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[2], onvalue="동아일보", offvalue="").grid(row=0, column=2)
@@ -449,15 +414,15 @@ class LogInFrame():
     def __init__(self, master):        
         self.logIn = Frame(master, bg=backGroundColor)
         self.logIn.pack(fill="x", ipady=5)
-        idImg = PhotoImage(file = "images/id_icon.png")
-        idLabel = Label(self.logIn, text="아이디", width=55, image=idImg, compound=BOTTOM, fg="white", bg=backGroundColor, font=10)
+        
+        idLabel = Label(self.logIn, text="아이디", width=7, fg="white", bg=backGroundColor, font=10)
         idLabel.pack(side="left")
-        # idEntry = Entry(self.logIn, width=11, font=10)
-        # idEntry.pack(side="left", padx=5)
+        idEntry = Entry(self.logIn, width=11, font=10)
+        idEntry.pack(side="left", padx=5)
 
         backButton = Button(self.logIn, text="←", width=2, fg="white", bg=backGroundColor, font=6, command=self.back)
         backButton.pack(side="right", padx=7)
-        goButton = Button(self.logIn, text="Go", width=2, fg="white", bg=backGroundColor, font=6)
+        goButton = Button(self.logIn, text="Go", width=3, fg="white", bg=backGroundColor, font=6)
         goButton.pack(side="right", padx=7)
 
         pwEntry = Entry(self.logIn, width=12, font=10)
