@@ -15,7 +15,7 @@ def newsCuratorRun():
     global sectionFrame
     global newsFrame    
     global listFrame
-
+    
     backGroundColor = "#284922"
     root = Tk()
     root.title("News Curator")
@@ -96,7 +96,7 @@ class NewsScraper():
     def __init__(self):        
         
         self.HEADERS = {
-        "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
+        "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36",
         "Accept-Language" : "ko-KR,ko"
         }
 
@@ -115,38 +115,38 @@ class NewsScraper():
         res = requests.get(url, headers=self.HEADERS)
         res.raise_for_status()
 
-        self.soup = BeautifulSoup(res.text, 'html.parser')
-        return self.soup
+        soup = BeautifulSoup(res.text, 'html.parser')
+        return soup
 
     # article container 추출(ul)
     def extract_container(self, url):
-        self.soup = self.makeSoup(url)
-        self.containers = self.soup.find("div", {"class": "list_body newsflash_body"}).find_all("ul")
-        return self.containers
+        soup = self.makeSoup(url)
+        containers = soup.find("div", {"class": "list_body newsflash_body"}).find_all("ul")
+        return containers
 
     # container에서 각각의 article(ul) 추출
     def extract_each_article(self, url, cg, date):
-        self.containers = self.extract_container(url)
-        self.newspaper_list = [
+        containers = self.extract_container(url)
+        newspaper_list = [
             "중앙일보", 
             "동아일보", 
             "조선일보", 
             "한겨례", 
-            "경향"
+            "경향신문"
             ]
 
-        self.result = []
-        for container in self.containers:
+        result = []
+        for container in containers:
 
             ul = container.find_all("dl")
             
             for each in ul:
                 newspaper = each.find("span", {"class": "writing"}).text.strip()
-                if not(newspaper in self.newspaper_list):
+                if not(newspaper in newspaper_list):
                     continue
                 title = each.find_all("dt")[-1].text.strip()
                 link = each.find("a")["href"]
-                self.result.append({
+                result.append({
                     "date" : date,
                     "category" : cg,
                     "title" : title,
@@ -154,7 +154,7 @@ class NewsScraper():
                     "link" : link
                 })
 
-        return self.result
+        return result
 
     # 마지막 page 찾음
     def find_last_page(self, url):
@@ -170,38 +170,39 @@ class NewsScraper():
                 continue
             else:
                 try:
-                    self.last_page = int(next_page[-1].text)
+                    last_page = int(next_page[-1].text)
                 except:
-                    self.last_page = int(soup.find("div", {"class" : "paging"}).find("strong").text)
-            return self.last_page
+                    last_page = int(soup.find("div", {"class" : "paging"}).find("strong").text)
+            return last_page
 
     # 각 페이지에서 기사 추출(각 페이지에서 extract_each_article 실행)
     def extract_each_page(self, url, cg, date):
         last_page = self.find_last_page(url)
-        self.result = []
+        result = []
         for n in range(1, last_page + 1):
             print(f"Now scrapping page {n} / {last_page} in {cg}")
             new_url = url + "&page=" +str(n)
             page_result = self.extract_each_article(new_url, cg, date)
-            self.result += page_result
-        return self.result   
+            result += page_result            
+        return result   
 
     # 사용자 입력 기간 동안의 기사 추출(각 날짜에서 extract_each_date 실행)
 
     def extract_each_date(self, url, cg, sd, ed):
         date_lst = searchFrame.getDateList(sd, ed)
-        self.result = []
+        result = []
         for date in date_lst:
             print(f"Now scraping {date} / {date_lst[-1]} in {cg}")
             new_url = url + date
             date_result = self.extract_each_page(new_url, cg, date)
-            self.result += date_result
-        return self.result
+            result += date_result
+
+        return result
     
 
     def extract_article(self, sd, ed, cg):
-        self.url = self.URLS[cg]
-        return self.extract_each_date(self.url, cg, sd, ed)    
+        url = self.URLS[cg]
+        return self.extract_each_date(url, cg, sd, ed)    
 
 
 # 검색 프레임
@@ -270,7 +271,7 @@ class SearchFrame():
     # 검색    
     def search(self):
         self.dateSet()
-        self.removeCal()
+        
         searchSection = []
         searchNews = []
         searchWord = self.searchEntry.get()
@@ -280,12 +281,17 @@ class SearchFrame():
                 searchSection.append(sectionFrame.sectionVar[i].get())
 
             if newsFrame.newsVar[i].get() != "":
-                searchNews.append(newsFrame.newsVar[i].get())                
+                searchNews.append(newsFrame.newsVar[i].get())
+        
         
         search_list = self.apply_temrs(searchSection, searchNews, searchWord)
 
+
+
         # 화면 초기화
         listFrame.leftNewsList.delete(0, END)
+
+        self.removeCal()
 
         # 검색결과 화면에 뿌리기
         for list in search_list:
@@ -295,16 +301,16 @@ class SearchFrame():
             listFrame.leftNewsList.insert(END, "")
 
     # 카테고리면 데이터 결과 추가하기
-    def apply_temrs(self, cgs, newspapers, word):
+    def apply_temrs(self, cgs, newspapers, word):        
 
         newsScraper = NewsScraper()
         showing_result = []
         
         for cg in cgs:
-            result = newsScraper.extract_article(searchFrame.startDate, searchFrame.endDate, cg)            
-            showing_result += result
-        
-        for result in showing_result:
+            result = newsScraper.extract_article(self.startDate, self.endDate, cg)               
+            showing_result += result        
+
+        for result in reversed(showing_result):
 
             if result["newspaper"] not in newspapers or word not in result["title"]:
                 showing_result.remove(result)            
@@ -413,7 +419,7 @@ class NewsFrame():
         checkJungang = Checkbutton(newsFrame, text="중앙일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[1], onvalue="중앙일보", offvalue="").grid(row=0, column=1)
         checkDonga = Checkbutton(newsFrame, text="동아일보", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[2], onvalue="동아일보", offvalue="").grid(row=0, column=2)
         checkHan = Checkbutton(newsFrame, text="한겨레", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[3], onvalue="한겨레", offvalue="").grid(row=0, column=3)
-        checkKyung = Checkbutton(newsFrame, text="경향", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[4], onvalue="경향", offvalue="").grid(row=0, column=4)        
+        checkKyung = Checkbutton(newsFrame, text="경향신문", font=15, fg="white", activebackground = backGroundColor, bg=backGroundColor, width=15, selectcolor=backGroundColor, pady=15, variable=self.newsVar[4], onvalue="경향신문", offvalue="").grid(row=0, column=4)        
     
 # logIn Frame
 class LogInFrame():
@@ -512,10 +518,9 @@ class HeaderFrame():
         self.newsCuratorLabel = Label(self.header, text="뉴스 큐레이터", width=80, fg="white", bg=backGroundColor, anchor=W, font='Helvetica 20 bold')
         self.newsCuratorLabel.pack(fill="x", side="left")
 
-
-
 def run():
     newsCuratorRun()
 
 if __name__ == "__main__":
     run()
+    
